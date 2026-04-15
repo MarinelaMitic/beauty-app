@@ -1,4 +1,5 @@
 1. Opis aplikacije
+   
 Beauty Shelf je web aplikacija dizajnirana kao digitalni ormarić za kozmetiku. Služi korisnicima
 da prate rok trajanja svojih proizvoda nakon otvaranja (PAO - Period After Opening). Korisnik
 unosi brend, tip proizvoda i datum otvaranja, a aplikacija automatski izračunava datum isteka,
@@ -13,6 +14,7 @@ Tehnologije koje se koriste:
 
 
 2. Link repozitorija
+
    
 GitHub repozitorij: git@github.com:MarinelaMitic/beauty-app.git
 
@@ -28,6 +30,7 @@ Za pokretanje aplikacije potrebni su sljedeći softver i verzije:
 
 
 4. Arhitektura aplikacije
+
    
 Aplikacija koristi mikroservisnu arhitekturu sa tri osnovne komponente:
 1. Klijentski sloj (Frontend): Nginx kontejner koji servira statički sadržaj.
@@ -37,6 +40,7 @@ Svi servisi su povezani u zajedničku internu Docker mrežu pod nazivom beauty_n
 
 
 5. Opis servisa, mreža i volumena
+
    
 Servisi:
 • beauty_frontend: Radi na portu 80 (mapiran na 8080 hosta). Koristi zvanični
@@ -54,6 +58,7 @@ postgresql/data.
 
 
 6. Upute za pokretanje
+
    
 Aplikacija se pokreće u nekoliko koraka:
 1. Klonirajte repozitorij i uđite u root folder projekta.
@@ -64,6 +69,7 @@ Aplikacija se pokreće u nekoliko koraka:
 
    
 7. Način pristupa aplikaciji
+
    
 Nakon pokretanja, aplikaciji možete pristupiti putem browsera na:
 • URL: http://localhost:8080
@@ -71,6 +77,7 @@ Nakon pokretanja, aplikaciji možete pristupiti putem browsera na:
 
 
 8. Korištenje AI alata
+
 
 Korišteni alat: Google Gemini (Gemini 1.5 Flash model).
 
