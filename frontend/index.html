@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <title>Beauty Shelf | Official</title>
+    <style>
+        :root { 
+            --p: #d81b60; 
+            --s: #ad1457; 
+            --txt: #4a4a4a; 
+            --err: #e74c3c; 
+            --warn: #f39c12; 
+            --succ: #27ae60; 
+            --gray: #a0a0a0;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-fancy: Georgia, 'Times New Roman', serif;
+        }
+
+        body { 
+            font-family: var(--font-main); 
+            background: linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%); 
+            color: var(--txt); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px; 
+            margin: 0; 
+            min-height: 100vh; 
+        }
+
+        .container { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.1); 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            margin-bottom: 40px; 
+        }
+
+        .history-container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 850px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+        }
+
+        .header-section { margin-bottom: 30px; }
+        h1 { font-family: var(--font-fancy); color: var(--p); font-size: 38px; margin-bottom: 5px; margin-top: 0; }
+        .subtitle { font-family: var(--font-main); font-weight: 300; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; color: var(--gray); }
+        .history-container h3 { font-family: var(--font-fancy); font-size: 26px; color: var(--p); margin-bottom: 20px; text-align: left; }
+        label { display: block; text-align: left; margin: 15px 0 8px 5%; font-weight: 600; font-size: 13px; text-transform: uppercase; color: #888; }
+        label span { color: var(--p); }
+
+        select, input { 
+            display: block;
+            margin: 0 auto 10px auto; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 2px solid #eee; 
+            width: 90%; 
+            font-size: 15px; 
+            outline: none; 
+            transition: 0.3s; 
+            background-color: #fafafa; 
+            font-family: var(--font-main); 
+            color: var(--gray); 
+            box-sizing: border-box; 
+        }
+
+        select:focus, input:focus, .is-valid { color: var(--txt) !important; border-color: var(--p); }
+
+        .is-invalid { border-color: var(--err) !important; background-color: #fffaf9; }
+        .is-valid { border-color: var(--succ) !important; background-color: #fafffb; }
+        
+        #error-msg { color: var(--err); font-weight: 500; display: none; font-size: 14px; background: #fee; padding: 10px; border-radius: 8px; width: 90%; margin: 0 auto 20px auto; }
+
+        /* Stilovi redova u tabeli */
+        .danger-row { background-color: #ffebee !important; color: #c62828; font-weight: bold; }
+        .warning-row { background-color: #fff3e0 !important; color: #e65100; font-weight: bold; }
+        .success-row { background-color: #f1f8e9 !important; color: #2e7d32; font-weight: bold; }
+
+        button#calc-btn { 
+            background: linear-gradient(to right, var(--p), var(--s)); 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 600; 
+            margin-top: 25px; 
+            padding: 16px; 
+            width: 90%; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.3); 
+            transition: 0.3s; 
+            font-family: var(--font-main); 
+        }
+
+        .result-box { margin-top: 30px; padding: 20px; border-radius: 12px; display: none; border: 1px solid #fce4ec; background: #fff9fb; }
+        .success-text { color: var(--succ); font-weight: 600; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .date-badge { display: inline-block; background: var(--p); color: white; padding: 5px 15px; border-radius: 50px; font-weight: bold; margin-top: 10px; }
+
+        /* Tabela - Vraćanje starog izgleda slova */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { border-bottom: 2px solid #fce4ec; padding: 12px; text-align: left; color: var(--p); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; font-family: var(--font-main); }
+        .delete-btn { cursor: pointer; border: none; background: none; font-size: 18px; transition: 0.2s; }
+    </style>
+</head>
+
+<body onload="osvjeziListu()">
+
+    <div class="container">
+        <div class="header-section">
+            <h1>Beauty Shelf</h1>
+            <div class="subtitle">Digitalni kozmetički ormarić</div>
+        </div>
+        
+        <div id="error-msg">⚠️ Molimo popunite obavezna polja označena sa *.</div>
+
+        <label>Kategorija <span>*</span></label>
+        <select id="kategorija" onchange="azurirajProizvode(); v(this); sakrijRezultat();">
+            <option value="">Izaberite kategoriju</option>
+            <option value="lice">LICE (Face)</option>
+            <option value="oci">OČI (Eyes)</option>
+            <option value="usne">USNE (Lips)</option>
+            <option value="obrve">OBRVE (Brows)</option>
+            <option value="njega">NJEGA KOŽE (Skincare)</option>
+        </select>
+
+        <label>Proizvod <span>*</span></label>
+        <select id="proizvod" onchange="toggleP(this); v(this); sakrijRezultat();">
+            <option value="">Izaberite proizvod</option>
+        </select>
+        <input type="text" id="proizvod-rucno" placeholder="Upiši naziv proizvoda" style="display:none;" oninput="v(this); sakrijRezultat();">
+
+        <label>Brend <span>*</span></label>
+        <select id="brend-select" onchange="toggleB(this); v(this); sakrijRezultat();">
+            <option value="">Izaberite brend</option>
+            <optgroup label="Popularni">
+                <option value="Essence">Essence</option>
+                <option value="Catrice">Catrice</option>
+                <option value="Maybelline">Maybelline</option>
+                <option value="L'Oreal">L'Oreal</option>
+                <option value="Max Factor">Max Factor</option>
+                <option value="Bourjois">Bourjois</option>
+                <option value="Revolution">Makeup Revolution</option>
+                <option value="NYX">NYX Professional</option>
+                <option value="Kiko Milano">Kiko Milano</option>
+                <option value="Aura">Aura</option>
+            </optgroup>
+            <optgroup label="High-end">
+                <option value="MAC">MAC Cosmetics</option>
+                <option value="Dior">Dior Beauty</option>
+                <option value="Chanel">Chanel Beauty</option>
+                <option value="Estee Lauder">Estée Lauder</option>
+                <option value="Lancome">Lancôme</option>
+                <option value="Charlotte Tilbury">Charlotte Tilbury</option>
+                <option value="Huda Beauty">Huda Beauty</option>
+                <option value="Fenty Beauty">Fenty Beauty</option>
+                <option value="Rare Beauty">Rare Beauty</option>
+                <option value="NARS">NARS</option>
+                <option value="Too Faced">Too Faced</option>
+                <option value="Benefit">Benefit Cosmetics</option>
+                <option value="Anastasia Beverly Hills">Anastasia Beverly Hills</option>
+                <option value="Urban Decay">Urban Decay</option>
+                <option value="Tarte">Tarte Cosmetics</option>
+            </optgroup>
+            <optgroup label="Skincare">
+                <option value="The Ordinary">The Ordinary</option>
+                <option value="CeraVe">CeraVe</option>
+                <option value="La Roche-Posay">La Roche-Posay</option>
+                <option value="Vichy">Vichy</option>
+                <option value="Clinique">Clinique</option>
+            </optgroup>
+            <option value="other">Ostalo (Upiši ručno)</option>
+        </select>
+        <input type="text" id="brend-rucno" placeholder="Upiši naziv brenda" style="display:none;" oninput="v(this); sakrijRezultat();">
+
+        <label>Rok trajanja <span>*</span></label>
+        <select id="rok" onchange="v(this); sakrijRezultat();">
+            <option value="">Izaberite dužinu roka trajanja</option>
+            <option value="3">3 mjeseca</option>
+            <option value="6">6 mjeseci</option>
+            <option value="12">12 mjeseci</option>
+            <option value="24">24 mjeseca</option>
+            <option value="36">36 mjeseci</option>
+        </select>
+
+        <label>Datum otvaranja proizvoda<span>*</span></label>
+        <input type="date" id="datum" onchange="v(this); sakrijRezultat();">
+
+        <button id="calc-btn" onclick="izracunaj()">DODAJ U MOJU KOLEKCIJU</button>
+        <div id="rezultat" class="result-box"></div>
+    </div>
+
+    <div class="history-container">
+        <h3>✨ Moja kolekcija</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Brend</th>
+                    <th>Proizvod</th>
+                    <th>Otvoreno</th>
+                    <th>Ističe</th>
+                    <th>Status</th>
+                    <th>Briši</th>
+                </tr>
+            </thead>
+            <tbody id="lista-body"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = window.API_URL || "http://localhost:5000";
+        const podaci = {
+            lice: ["Tečni puder (Foundation)", "Korektor (Concealer)", "Puder u kamenu/prahu (Setting Powder)", "Rumenilo (Blush)", "Bronzer", "Hajlajter (Highlighter)", "Prajmer (Primer)", "Fiksator (Setting Spray)", "Ostalo (Other)"],
+            oci: ["Maskara (Mascara)", "Sjenilo za oči (Eyeshadow)", "Tuš za oči (Eyeliner)", "Olovka za oči (Eye Pencil)", "Baza za sjenilo (Eyeshadow Primer)", "Ostalo (Other)"],
+            usne: ["Ruž za usne (Lipstick)", "Sjajilo (Lip Gloss)", "Olovka za usne (Lip Liner)", "Balzam za usne (Lip Balm)", "Tečni mat ruž (Liquid Lipstick)", "Ostalo (Other)"],
+            obrve: ["Olovka za obrve (Brow Pencil)", "Maskara za obrve (Brow Mascara)", "Sjenilo za obrve (Brow Powder)", "Sapun/vosak za obrve (Brow Soap/Wax)", "Ostalo (Other)"],
+            njega: ["Krema za lice (Face Cream)", "Serum", "Maska za lice (Face Mask)", "Gel za čišćenje (Cleanser)", "Zaštitni faktor (SPF)", "Ostalo (Other)"]
+        };
+
+        function v(el) { 
+            if(!el.value || el.value === "") { el.classList.add("is-invalid"); el.classList.remove("is-valid"); el.style.color = "var(--gray)"; } 
+            else { el.classList.add("is-valid"); el.classList.remove("is-invalid"); el.style.color = "var(--txt)"; }
+        }
+
+        function sakrijRezultat() {
+            document.getElementById('rezultat').style.display = "none";
+        }
+
+        function toggleB(el) { 
+            const rucno = document.getElementById('brend-rucno');
+            rucno.style.display = (el.value === "other") ? "block" : "none";
+            if(el.value === "other") rucno.focus();
+        }
+
+        function toggleP(el) { 
+            const rucno = document.getElementById('proizvod-rucno');
+            rucno.style.display = (el.value === "Ostalo (Other)") ? "block" : "none";
+            if(el.value === "Ostalo (Other)") rucno.focus();
+        }
+        
+        function azurirajProizvode() {
+            const proSel = document.getElementById('proizvod');
+            proSel.innerHTML = '<option value="">Izaberite proizvod</option>';
+            proSel.classList.remove("is-valid", "is-invalid");
+            if (podaci[document.getElementById('kategorija').value]) {
+                podaci[document.getElementById('kategorija').value].forEach(p => {
+                    let opt = document.createElement('option'); opt.value = p; opt.text = p; proSel.add(opt);
+                });
+            }
+            document.getElementById('proizvod-rucno').style.display = "none";
+        }
+
+        async function izracunaj() {
+            const fields = ['kategorija', 'proizvod', 'brend-select', 'rok', 'datum'];
+            fields.forEach(id => v(document.getElementById(id)));
+
+            const bSel = document.getElementById('brend-select').value;
+            const pSel = document.getElementById('proizvod').value;
+            const finalB = bSel === "other" ? document.getElementById('brend-rucno').value : bSel;
+            const finalP = pSel === "Ostalo (Other)" ? document.getElementById('proizvod-rucno').value : pSel;
+            const dRaw = document.getElementById('datum').value;
+            const rokVal = document.getElementById('rok').value;
+
+            if(!finalB || !finalP || !dRaw || !rokVal) { 
+                document.getElementById('error-msg').style.display = "block"; 
+                return; 
+            }
+            
+            document.getElementById('error-msg').style.display = "none";
+            const dParts = dRaw.split('-');
+
+            try {
+                const res = await fetch(`${API_URL}/calculate`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ brend: finalB, proizvod: finalP, datum: `${dParts[2]}.${dParts[1]}.${dParts[0]}`, rucni_rok: rokVal })
+                });
+                const data = await res.json();
+                if(data.status === "success") {
+                    const rezDiv = document.getElementById('rezultat');
+                    rezDiv.style.display = "block";
+                    rezDiv.innerHTML = `
+                        <span class="success-text">USPJEŠNO DODANO!</span>
+                        <b>Uneseni proizvod vrijedi do:</b><br>
+                        <div class="date-badge">${data.istice_datuma}</div>
+                    `;
+                    osvjeziListu();
+                }
+            } catch (e) { alert("Greška pri spajanju na server!"); }
+        }
+
+        async function osvjeziListu() {
+            try {
+                const res = await fetch(`${API_URL}/history`);
+                const lista = await res.json();
+                const body = document.getElementById('lista-body');
+                body.innerHTML = '';
+
+                lista.forEach(p => {
+                    let rowClass = 'success-row';
+                    let statusText = 'OK';
+                    if (p.dana_do < 0) { rowClass = 'danger-row'; statusText = 'Baci!'; } 
+                    else if (p.dana_do <= 10) { rowClass = 'warning-row'; statusText = 'Pred istek!'; }
+
+                    body.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td>${p.brend}</td>
+                            <td>${p.proizvod}</td>
+                            <td>${p.otvoreno}</td>
+                            <td>${p.istek}</td>
+                            <td>${statusText}</td>
+                            <td><button class="delete-btn" onclick="obrisi(${p.id})">🗑️</button></td>
+                        </tr>`;
+                });
+            } catch(e) { console.log("Greška pri dohvaćanju liste."); }
+        }
+
+        async function obrisi(id) { 
+            try { 
+                await fetch(`${API_URL}/delete/${id}`, { method: 'DELETE' }); 
+                osvjeziListu(); 
+            } catch(e) { console.log("Greška pri brisanju."); } 
+        }
+    </script>
+</body>
+</html>

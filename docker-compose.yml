@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    container_name: beauty_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - beauty_data:/var/lib/postgresql/data
+    networks:
+      - beauty_network
+
+  backend:
+    build: ./backend
+    container_name: beauty_backend
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      FLASK_DEBUG: "1"
+    depends_on:
+      - db
+    networks:
+      - beauty_network
+
+  frontend:
+    build: ./frontend
+    container_name: beauty_frontend
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/index.html:/usr/share/nginx/html/index.html
+    networks:
+      - beauty_network
+
+networks:
+  beauty_network:
+    driver: bridge
+
+volumes:
+  beauty_data:
