@@ -113,11 +113,13 @@
 
 <body onload="osvjeziListu()">
 
-    <div class="container">
-        <div class="header-section">
-            <h1>Beauty Shelf</h1>
-            <div class="subtitle">Digitalni kozmetički ormarić</div>
-        </div>
+ <div class="container">
+       <div class="header-section" style="position: relative;">
+    <img src="decoration.svg"
+     style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; opacity:0.8; pointer-events:none; z-index:0;">
+    <h1 style="position:relative; z-index:1;">Beauty Shelf</h1>
+    <div class="subtitle" style="position:relative; z-index:1;">Digitalni kozmetički ormarić</div>
+ </div>
         
         <div id="error-msg">⚠️ Molimo popunite obavezna polja označena sa *.</div>
 
@@ -215,7 +217,7 @@
     </div>
 
     <script>
-     const API_URL = "http://beauty-alb-1698190734.us-east-1.elb.amazonaws.com";
+     const API_URL = window.API_URL || "http://localhost:5000";
         const podaci = {
             lice: ["Tečni puder (Foundation)", "Korektor (Concealer)", "Puder u kamenu/prahu (Setting Powder)", "Rumenilo (Blush)", "Bronzer", "Hajlajter (Highlighter)", "Prajmer (Primer)", "Fiksator (Setting Spray)", "Ostalo (Other)"],
             oci: ["Maskara (Mascara)", "Sjenilo za oči (Eyeshadow)", "Tuš za oči (Eyeliner)", "Olovka za oči (Eye Pencil)", "Baza za sjenilo (Eyeshadow Primer)", "Ostalo (Other)"],
@@ -292,6 +294,7 @@
                         <div class="date-badge">${data.istice_datuma}</div>
                     `;
                     osvjeziListu();
+                    resetujFormu();
                 }
             } catch (e) { alert("Greška pri spajanju na server!"); }
         }
@@ -328,6 +331,26 @@
                 osvjeziListu(); 
             } catch(e) { console.log("Greška pri brisanju."); } 
         }
+
+        function resetujFormu() {
+    // Reset svih select i input polja
+    document.getElementById('kategorija').value = '';
+    document.getElementById('proizvod').innerHTML = '<option value="">Izaberite proizvod</option>';
+    document.getElementById('brend-select').value = '';
+    document.getElementById('rok').value = '';
+    document.getElementById('datum').value = '';
+    document.getElementById('brend-rucno').value = '';
+    document.getElementById('brend-rucno').style.display = 'none';
+    document.getElementById('proizvod-rucno').value = '';
+    document.getElementById('proizvod-rucno').style.display = 'none';
+
+    // Ukloni is-valid klase
+    ['kategorija', 'proizvod', 'brend-select', 'rok', 'datum'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('is-valid', 'is-invalid');
+        el.style.color = 'var(--gray)';
+    });
+}
     </script>
 </body>
 </html>
